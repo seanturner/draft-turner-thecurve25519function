@@ -132,7 +132,7 @@ Let x_1 = 1
     z_2 = 0
     x_3 = x
     z_3 = 1
-    For t=254 to 0:
+    For t = 254 to 0:
             Do constant time conditional swap of (x_2, z_2) and (x_3, z_3) if s_t is set
             A = x_2 + z_2
             AA = A^2
@@ -171,12 +171,12 @@ The Curve25519 function can be used in an ECDH protocol as follows:
 
 Alice takes 32 random bytes in s[0] to s[32]. She masks the lower three bits of s[0] and the top bit of s[31] to zero and sets the second top most bit of s[31] to 1. This means that s is of the form 2^254+8*{0,1, ...., 2^(251)-1}.
 
-Alice then transmits Curve25519(s, 9) to Bob, where 9 is the number 9. As a sequence of 32 bytes, t, the representation of 9 is t[0]=9, and the remaining bytes are all zero. The natural wire-format representation of the value is in little-endian
+Alice then transmits K_A = Curve25519(s, 9) to Bob, where 9 is the number 9. As a sequence of 32 bytes, t, the representation of 9 is t[0]=9, and the remaining bytes are all zero. The natural wire-format representation of the value is in little-endian
 byte order.
 
-Bob picks a random g, and computes Curve25519(g, 9) similarly, and transmits it to Alice.
+Bob picks a random g, and computes K_B = Curve25519(g, 9) similarly, and transmits it to Alice.
 
-Alice computes K_A = Curve25519(s, Curve25519(g, 9)); Bob computes K_B = Curve25519(g, Curve25519(s, 9)) using their secret values and the received input.
+Alice computes Curve25519(s, Curve25519(g, 9)); Bob computes Curve25519(g, Curve25519(s, 9)) using their secret values and the received input.
 
 Both of them now share K=Curve25519(s, Curve25519(g, 9))=Curve25519(g, Curve25519(s, 9)) as a shared secret.  Alice and Bob use a key-derivation function, such as hashing K, to compute a shared secret.
 
@@ -219,3 +219,4 @@ None.
 --- back
 
 --- fluf
+   
