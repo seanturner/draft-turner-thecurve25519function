@@ -76,7 +76,9 @@ This document specifies the Curve25519 function, an ECDH (Elliptic-Curve Diffie-
 
 This document specifies the Curve25519 function, an ECDH (Elliptic-curve Diffie-Hellman) key-agreement scheme for use in cryptographic applications.  It was designed with performance and security in mind.
 
-This document provides a stable reference for the Curve25519 function {{Curve25519}} to which other specifications will refer when defining their use of Curve25519  This document does not specify the use of Curve25519 and any other specific protocol, such as TLS (Transport Layer Security) or IPsec (Internet Protocol Security).  This document specifies how to use Curve25519 for key exchange; it does not specify how to use Curve25519 for use with digital signatures.
+This document provides a stable reference for the Curve25519 function {{Curve25519}} to which other specifications may refer when defining their use of Curve25519  This document does not specify the use of Curve25519 in any other specific protocol, such as TLS (Transport Layer Security) or IPsec (Internet Protocol Security).  This document specifies how to use Curve25519 for key exchange; it does not specify how to use Curve25519 for use with digital signatures. This document
+defines the algorithm, expected "wire format," and provides some implementation
+guidance to avoid known side-channel exposures.
 
 Readers are assumed to be familiar with the concepts of elliptic curves, modular arithmetic, group operations, and finite fields {{RFC6090}} as well as rings {{Curve25519}}.
 
@@ -112,7 +114,7 @@ Note that all operations are performed mod p.
 
 Let p=2^255-19. Let E be the elliptic curve with the equation y^2=x^3+486662*x^2+x over GF(p).
 
-Each element x of GF(p) has a unique little-endian representation as 32 bytes s[0] ... s[31], such that s[0]+256*s[1]+256^2*s[2]+...+256^31*s[31] is congruent to x modulo p, and s[31] is minimal. Implementations MUST only produce points in this form, and MUST mask the high bit of byte 31 to zero on receiving a point.  The high bit is, according to convention, 0x80.
+Each element x of GF(p) has a unique little-endian representation as 32 bytes s[0] ... s[31], such that s[0]+256*s[1]+256^2*s[2]+...+256^31*s[31] is congruent to x modulo p, and s[31] is minimal. Implementations MUST only produce points in this form, and MUST mask the high bit of byte 31 to zero on receiving a point.  The high bit is, following convention, 0x80.
 
 Let X denote the projection map from a point (x,y) on E, to x, extended so that X of the point at infinity is zero.  X is surjective onto GF(p) if the y coordinate takes on values in GF(p) and in a quadratic extension of GF(p).
 
@@ -169,7 +171,8 @@ The Curve25519 function can be used in an ECDH protocol as follows:
 
 Alice takes 32 random bytes in s[0] to s[32]. She masks the lower three bits of s[0] and the top bit of s[31] to zero and sets the second top most bit of s[31] to 1. This means that s is of the form 2^254+8*{0,1, ...., 2^(251)-1}.
 
-Alice then transmits Curve25519(s, 9) to Bob, where 9 is the number 9. As a sequence of 32 bytes, t, the representation of 9 is t[0]=9, and the remaining bytes are all zero.
+Alice then transmits Curve25519(s, 9) to Bob, where 9 is the number 9. As a sequence of 32 bytes, t, the representation of 9 is t[0]=9, and the remaining bytes are all zero. The natural wire-format representation of the value is in little-endian
+byte order.
 
 Bob picks a random g, and computes Curve25519(g, 9) similarly, and transmits it to Alice.
 
