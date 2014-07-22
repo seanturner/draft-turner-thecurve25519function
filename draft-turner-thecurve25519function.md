@@ -124,7 +124,7 @@ Then Curve25519(s, X(Q))=X(sQ) is a function defined for all elements of GF(p). 
 
 Let s be a 255 bits long integer, where s=sum s_i2^i with s_i in {0,1}. 
 
-Computing Curve25519(s, x)  is one by the following procedure, taken from {{Curve25519}} based on formulas from {{Mont}}. All calculations are GF(p), i.e., they are modulo p. The parameter a24 is a24 = (486662 - 2)/4 = 121665. 
+Computing Curve25519(s, x)  is done by the following procedure, taken from {{Curve25519}} based on formulas from {{Mont}}. All calculations are done over GF(p), i.e., they are performed modulo p. The parameter a24 is a24 = (486662 - 2)/4 = 121665. 
 
 ~~~~~~~~~~
 Let x_1 = 1
@@ -157,8 +157,7 @@ To compute the conditional swap in constant time (independent of s_t) use
       dummy = s_t*(x_2-x_3)
       x_2 = x_2 - dummy
       x_3 = x_3 + dummy
-      
-or 
+where s_t is 1 or 0, or 
       dummy = s_t & (x_2 XOR x_3)
       x_2 = x_2 XOR x_3
       x_3 = x_3 XOR x_2
@@ -169,7 +168,7 @@ where s_t is regarded as the all-1 word of 255 bits. The latter version is more 
 
 The Curve25519 function can be used in an ECDH protocol as follows:
 
-Alice takes 32 random bytes in s[0] to s[32]. She masks the lower three bits of s[0] and the top bit of s[31] to zero and sets the second top most bit of s[31] to 1. This means that s is of the form 2^254+8*{0,1, ...., 2^(251)-1}.
+Alice takes 32 random bytes in s[0] to s[32]. She masks the lower three bits of s[0] and the top bit of s[31] to zero and sets the second top most bit of s[31] to 1. This means that s is of the form 2^254+8*{0,1, ...., 2^(251)-1} as a little-endian integer.
 
 Alice then transmits K_A = Curve25519(s, 9) to Bob, where 9 is the number 9. As a sequence of 32 bytes, t, the representation of 9 is t[0]=9, and the remaining bytes are all zero. The natural wire-format representation of the value is in little-endian
 byte order.
