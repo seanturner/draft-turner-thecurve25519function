@@ -133,7 +133,8 @@ Let x_1 = 1
     x_3 = x
     z_3 = 1
     For t = 254 to 0:
-            Do constant time conditional swap of (x_2, z_2) and (x_3, z_3) if s_t is set
+            Do constant time conditional swap of:
+              (x_2, z_2) and (x_3, z_3) if s_t is set
             A = x_2 + z_2
             AA = A^2
             B = x_2 - z_2
@@ -147,7 +148,8 @@ Let x_1 = 1
             z_3 = x_1 * (DA - CB)^2
             x_2 = AA * BB
             z_2 = E * (AA + a24 * E)
-            Do constant time conditional swap of (x_2, z_2) and (x_3, z_3) if s_t is set
+            Do constant time conditional swap of:
+              (x_2, z_2) and (x_3, z_3) if s_t is set
     Return x_2*(z_2^(p-1))
 ~~~~~~~~~~
 
@@ -207,7 +209,7 @@ Shared secret:
 
 Curve25519 meets all standard assumptions on DH and DLP difficulty. 
 
-In addtion, Curve25519 is twist secure: the co-factor of the curve is 8, that of the twist is 4. Protocols that require contributory behavior must ban outputs K_A =0, K_B = 0 or K = 0.  
+In addition, Curve25519 is twist secure: the co-factor of the curve is 8, that of the twist is 4. Protocols that require contributory behavior must ban outputs K_A =0, K_B = 0 or K = 0.  
 
 Curve25519 is designed to enable very high performance software implementations, thus reducing the cost of highly secure cryptography to a point where it can be used more widely.
 
@@ -219,8 +221,6 @@ None.
 
 We would like to thank Tanja Lange (Technische Universiteit Eindhoven) for her review and comments.
 
-
 --- back
 
---- fluf
    
