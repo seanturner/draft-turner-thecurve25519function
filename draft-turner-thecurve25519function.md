@@ -2,7 +2,7 @@
 title: The Curve25519 Function
 abbrev: The Curve25519 Function
 docname: draft-turner-thecurve25519function-latest
-date: 2014-07-18
+date: 2014-07-29
 category: info
 
 ipr: trust200902
@@ -68,13 +68,13 @@ informative:
 
 --- abstract
 
-This document specifies the Curve25519 function, an ECDH (Elliptic-Curve Diffie-Hellman) key-agreement scheme for use in cryptographic applications.  It was designed with performance and security in mind.
+This document specifies the Curve25519 function, an ECDH (Elliptic-Curve Diffie-Hellman) key-agreement scheme for use in cryptographic applications.  It was designed with performance and security in mind.  This document is based on information in the public domain.
 
 --- middle
 
 # Introduction
 
-This document specifies the Curve25519 function, an ECDH (Elliptic-curve Diffie-Hellman) key-agreement scheme for use in cryptographic applications.  It was designed with performance and security in mind.
+This document specifies the Curve25519 function, an ECDH (Elliptic-curve Diffie-Hellman) key-agreement scheme for use in cryptographic applications.  It was designed with performance and security in mind.  This document is based on information in the public domain.
 
 This document provides a stable reference for the Curve25519 function {{Curve25519}} to which other specifications may refer when defining their use of Curve25519  This document does not specify the use of Curve25519 in any other specific protocol, such as TLS (Transport Layer Security) or IPsec (Internet Protocol Security).  This document specifies how to use Curve25519 for key exchange; it does not specify how to use Curve25519 for use with digital signatures. This document
 defines the algorithm, expected "wire format," and provides some implementation
@@ -214,6 +214,11 @@ Curve25519 is designed to enable very high performance software implementations,
 # IANA Considerations
 
 None.
+
+# Acknowledgements
+
+We would like to thank Tanja Lange (Technische Universiteit Eindhoven) for her review and comments.
+
 
 --- back
 
