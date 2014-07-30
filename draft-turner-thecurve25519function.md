@@ -111,8 +111,16 @@ Note that all operations are performed modulo p.
 Let p = 2^255 - 19. Let E be the elliptic curve with the equation  
 y^2 = x^3 + 486662 * x^2 + x over GF(p).
 
-Each element x of GF(p) has a unique little-endian representation as 32 bytes s[0] ... s[31], such that  
-s[0] + 256 * s[1] + 256^2 * s[2] + ... + 256^31 * s[31] is congruent to x modulo p, and s[31] is minimal. Implementations MUST only produce points in this form, and MUST mask the high bit of byte 31 to zero on receiving a point.  The high bit is, following convention, 0x80.
+Each element x of GF(p) has a unique little-endian representation
+as 32 bytes s[0] ... s[31], such that s[0] + 256 * s[1] + 256^2 *
+s[2] + ... + 256^31 * s[31] is congruent to x modulo p, and s[31]
+is minimal. Implementations MUST only produce points in this form.
+On receiving a point, implementations MUST
+mask the high bit of byte 31 to zero.
+This is done to preserve compatibility with point formats which
+reserve the sign bit for use in other protocols and increase resistance to
+implementation fingerprinting.
+Implementations MUST also reduce the received number mod p.
 
 Let X denote the projection map from a point (x,y) on E, to x, extended so that X of the point at infinity is zero.  X is surjective onto GF(p) if the y coordinate takes on values in GF(p) and in a quadratic extension of GF(p).
 
@@ -123,7 +131,7 @@ Then Curve25519(s, X(Q)) = X(sQ) is a function defined for all elements of GF(p)
 Let s be a 255 bits long integer, where  
 s = sum s_i * 2^i with s_i in {0, 1}. 
 
-Computing Curve25519(s, x)  is done by the following procedure, taken from {{Curve25519}} based on formulas from {{Mont}}. All calculations are done over GF(p), i.e., they are performed modulo p. The parameter a24 is a24 = (486662 - 2) / 4 = 121665. 
+Computing Curve25519(s, x)  is done by the following procedure, taken from {{Curve25519}} based on formulas from {{Mont}}. All calculations are performed in GF(p), i.e., they are performed modulo p. The parameter a24 is a24 = (486662 - 2) / 4 = 121665. 
 
 ~~~~~~~~~~
 Let x_1 = 1
