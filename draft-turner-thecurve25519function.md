@@ -168,13 +168,13 @@ To compute the conditional swap in constant time (independent of s_t) use:
       x_2 = x_2 - dummy
       x_3 = x_3 + dummy
 
-where s_t is 1 or 0: 
+where s_t is 1 or 0. Alternatively use: 
 
       dummy = s_t & (x_2 XOR x_3)
       x_2 = x_2 XOR x_3
       x_3 = x_3 XOR x_2
 
-where s_t is regarded as the all-1 word of 255 bits. The latter version is more efficient on most architectures.
+where s_t is regarded as the all-1 or all-0 word of 255 bits. The latter version is more efficient on most architectures.
 
 
 # Use of the Curve25519 function
