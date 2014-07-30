@@ -120,7 +120,7 @@ mask the high bit of byte 31 to zero.
 This is done to preserve compatibility with point formats which
 reserve the sign bit for use in other protocols and increase resistance to
 implementation fingerprinting.
-Implementations MUST also reduce the received number mod p.
+Implementations MUST reject numbers in the range [2^255-19, 2^255-1], inclusive.
 
 Let X denote the projection map from a point (x,y) on E, to x, extended so that X of the point at infinity is zero.  X is surjective onto GF(p) if the y coordinate takes on values in GF(p) and in a quadratic extension of GF(p).
 
