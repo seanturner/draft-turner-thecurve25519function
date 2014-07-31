@@ -134,7 +134,7 @@ s = sum s_i * 2^i with s_i in {0, 1}.
 Computing Curve25519(s, x)  is done by the following procedure, taken from {{Curve25519}} based on formulas from {{Mont}}. All calculations are performed in GF(p), i.e., they are performed modulo p. The parameter a24 is a24 = (486662 - 2) / 4 = 121665. 
 
 ~~~~~~~~~~
-Let x_1 = 1
+Let x_1 = x
     x_2 = 1
     z_2 = 0
     x_3 = x
