@@ -187,7 +187,6 @@ Alice then transmits K_A = Curve25519(s, 9) to Bob, where 9 is the number 9. As 
 byte order.
 
 Bob picks a random g, and computes K_B = Curve25519(g, 9) similarly, and transmits it to Alice.
-If necessary, Alice reduces the received number mod p.
 
 Alice computes Curve25519(s, Curve25519(g, 9)); Bob computes Curve25519(g, Curve25519(s, 9)) using their secret values and the received input.
 
