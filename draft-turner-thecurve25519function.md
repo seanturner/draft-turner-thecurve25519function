@@ -68,25 +68,46 @@ informative:
 
 --- abstract
 
-This document specifies the Curve25519 function, an ECDH (Elliptic-Curve Diffie-Hellman) key-agreement scheme for use in cryptographic applications.  It was designed with performance and security in mind.  This document is based on information in the public domain.
+This document specifies the Curve25519 function, an ECDH
+(Elliptic-Curve Diffie-Hellman) key-agreement scheme for use in
+cryptographic applications.  It was designed with performance and
+security in mind.  This document is based on information in the
+public domain.
 
 --- middle
 
 # Introduction
 
-This document specifies the Curve25519 function, an ECDH (Elliptic-curve Diffie-Hellman) key-agreement scheme for use in cryptographic applications.  It was designed with performance and security in mind.  This document is based on information in the public domain.
+This document specifies the Curve25519 function, an ECDH
+(Elliptic-curve Diffie-Hellman) key-agreement scheme for use in
+cryptographic applications.  It was designed with performance and
+security in mind.  This document is based on information in the
+public domain.
 
-This document provides a stable reference for the Curve25519 function {{Curve25519}} to which other specifications may refer when defining their use of Curve25519  This document does not specify the use of Curve25519 in any other specific protocol, such as TLS (Transport Layer Security) or IPsec (Internet Protocol Security).  This document specifies how to use Curve25519 for key exchange; it does not specify how to use Curve25519 for use with digital signatures. This document defines the algorithm, expected "wire format," and provides some implementation guidance to avoid known side-channel exposures.
+This document provides a stable reference for the Curve25519 function
+{{Curve25519}} to which other specifications may refer when defining
+their use of Curve25519  This document does not specify the use of
+Curve25519 in any other specific protocol, such as TLS (Transport
+Layer Security) or IPsec (Internet Protocol Security).  This document
+specifies how to use Curve25519 for key exchange; it does not specify
+how to use Curve25519 for use with digital signatures. This document
+defines the algorithm, expected "wire format," and provides some
+implementation guidance to avoid known side-channel exposures.
 
-Readers are assumed to be familiar with the concepts of elliptic curves, modular arithmetic, group operations, and finite fields {{RFC6090}} as well as rings {{Curve25519}}.
+Readers are assumed to be familiar with the concepts of elliptic
+curves, modular arithmetic, group operations, and finite fields
+{{RFC6090}} as well as rings {{Curve25519}}.
 
 ## Terminology
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in {{RFC2119}}.
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+document are to be interpreted as described in {{RFC2119}}.
 
 # Notation and Definitions
 
-The following notation and definitions are used in this document (notation is to the left of the ":"):
+The following notation and definitions are used in this document
+(notation is to the left of the ":"):
 
 A: A value used in the elliptic-curve equation E.
 
@@ -108,30 +129,37 @@ Note that all operations are performed modulo p.
 
 # The Curve25519 Function
 
-Let p = 2^255 - 19. Let E be the elliptic curve with the equation  
-y^2 = x^3 + 486662 * x^2 + x over GF(p).
+Let p = 2^255 - 19. Let E be the elliptic curve with the equation y^2 =
+x^3 + 486662 * x^2 + x over GF(p).
 
 Each element x of GF(p) has a unique little-endian representation
 as 32 bytes s[0] ... s[31], such that s[0] + 256 * s[1] + 256^2 *
 s[2] + ... + 256^31 * s[31] is congruent to x modulo p, and s[31]
 is minimal. Implementations MUST only produce points in this form.
-On receiving a point, implementations MUST
-mask the high bit of byte 31 to zero.
-This is done to preserve compatibility with point formats which
-reserve the sign bit for use in other protocols and increase resistance to
-implementation fingerprinting.
-Implementations MUST reject numbers in the range [2^255-19, 2^255-1], inclusive.
+On receiving a point, implementations MUST mask the high bit of byte
+31 to zero.  This is done to preserve compatibility with point formats
+which reserve the sign bit for use in other protocols and increase
+resistance to implementation fingerprinting.  Implementations MUST
+reject numbers in the range [2^255-19, 2^255-1], inclusive.
 
-Let X denote the projection map from a point (x,y) on E, to x, extended so that X of the point at infinity is zero.  X is surjective onto GF(p) if the y coordinate takes on values in GF(p) and in a quadratic extension of GF(p).
+Let X denote the projection map from a point (x,y) on E, to x, extended
+so that X of the point at infinity is zero.  X is surjective onto
+GF(p) if the y coordinate takes on values in GF(p) and in a quadratic
+extension of GF(p).
 
-Then Curve25519(s, X(Q)) = X(sQ) is a function defined for all elements of GF(p). The remainder of this document describes how to compute this function quickly and securely, and use it in a Diffie-Hellman scheme.
+Then Curve25519(s, X(Q)) = X(sQ) is a function defined for all elements
+of GF(p). The remainder of this document describes how to compute this
+function quickly and securely, and use it in a Diffie-Hellman scheme.
 
 # Implementing Curve25519
 
 Let s be a 255 bits long integer, where  
 s = sum s_i * 2^i with s_i in {0, 1}. 
 
-Computing Curve25519(s, x)  is done by the following procedure, taken from {{Curve25519}} based on formulas from {{Mont}}. All calculations are performed in GF(p), i.e., they are performed modulo p. The parameter a24 is a24 = (486662 - 2) / 4 = 121665. 
+Computing Curve25519(s, x)  is done by the following procedure,
+taken from {{Curve25519}} based on formulas from {{Mont}}. All
+calculations are performed in GF(p), i.e., they are performed modulo
+p. The parameter a24 is a24 = (486662 - 2) / 4 = 121665.
 
 ~~~~~~~~~~
 Let x_1 = x
@@ -160,7 +188,10 @@ Let x_1 = x
     Return x_2 * (z_2^(p - 1))
 ~~~~~~~~~~
 
-In implementing this procedure, due to the existence of side-channels in commodity hardware, it is vital that the pattern of memory accesses and jumps not depend on the bits of s. It is also essential that the arithmetic used not leak information about words.
+In implementing this procedure, due to the existence of side-channels
+in commodity hardware, it is vital that the pattern of memory accesses
+and jumps not depend on the bits of s. It is also essential that the
+arithmetic used not leak information about words.
 
 To compute the conditional swap in constant time (independent of s_t) use:
 
@@ -174,24 +205,34 @@ where s_t is 1 or 0. Alternatively use:
       x_2 = x_2 XOR x_3
       x_3 = x_3 XOR x_2
 
-where s_t is regarded as the all-1 or all-0 word of 255 bits. The latter version is more efficient on most architectures.
-
+where s_t is regarded as the all-1 or all-0 word of 255 bits. The
+latter version is more efficient on most architectures.
 
 # Use of the Curve25519 function
 
 The Curve25519 function can be used in an ECDH protocol as follows:
 
-Alice takes 32 random bytes in s[0] to s[32]. She masks the lower three bits of s[0] and the top bit of s[31] to zero and sets the second top most bit of s[31] to 1. This means that s is of the form 2^254 + 8 * {0, 1, ..., 2^(251) - 1} as a little-endian integer.
+Alice takes 32 random bytes in s[0] to s[32]. She masks the lower three
+bits of s[0] and the top bit of s[31] to zero and sets the second top
+most bit of s[31] to 1. This means that s is of the form 2^254 + 8 *
+{0, 1, ..., 2^(251) - 1} as a little-endian integer.
 
-Alice then transmits K_A = Curve25519(s, 9) to Bob, where 9 is the number 9. As a sequence of 32 bytes, t, the representation of 9 is t[0] = 9, and the remaining bytes are all zero. The natural wire-format representation of the value is in little-endian
-byte order.
+Alice then transmits K_A = Curve25519(s, 9) to Bob, where 9 is the
+number 9. As a sequence of 32 bytes, t, the representation of 9 is t[0]
+= 9, and the remaining bytes are all zero. The natural wire-format
+representation of the value is in little-endian byte order.
 
-Bob picks a random g, and computes K_B = Curve25519(g, 9) similarly, and transmits it to Alice.
+Bob picks a random g, and computes K_B = Curve25519(g, 9) similarly,
+and transmits it to Alice.
 
-Alice computes Curve25519(s, Curve25519(g, 9)); Bob computes Curve25519(g, Curve25519(s, 9)) using their secret values and the received input.
+Alice computes Curve25519(s, Curve25519(g, 9)); Bob computes
+Curve25519(g, Curve25519(s, 9)) using their secret values and the
+received input.
 
-Both of them now share   
-K = Curve25519(s, Curve25519(g, 9)) = Curve25519(g, Curve25519(s, 9)) as a shared secret.  Alice and Bob use a key-derivation function, such as hashing K, to compute a shared secret.
+Both of them now share K = Curve25519(s, Curve25519(g, 9)) =
+Curve25519(g, Curve25519(s, 9)) as a shared secret.  Alice and
+Bob use a key-derivation function, such as hashing K, to compute a
+shared secret.
 
 # Test Vectors
 
@@ -219,11 +260,15 @@ Shared secret:
 
 # Security Considerations
 
-Curve25519 meets all standard assumptions on DH and DLP difficulty. 
+Curve25519 meets all standard assumptions on DH and DLP difficulty.
 
-In addition, Curve25519 is twist secure: the co-factor of the curve is 8, that of the twist is 4. Protocols that require contributory behavior must ban outputs K_A = 0, K_B = 0 or K = 0.  
+In addition, Curve25519 is twist secure: the co-factor of the curve
+is 8, that of the twist is 4. Protocols that require contributory
+behavior must ban outputs K_A = 0, K_B = 0 or K = 0.
 
-Curve25519 is designed to enable very high performance software implementations, thus reducing the cost of highly secure cryptography to a point where it can be used more widely.
+Curve25519 is designed to enable very high performance software
+implementations, thus reducing the cost of highly secure cryptography
+to a point where it can be used more widely.
 
 # IANA Considerations
 
@@ -231,7 +276,8 @@ None.
 
 # Acknowledgements
 
-We would like to thank Tanja Lange (Technische Universiteit Eindhoven) for her review and comments.
+We would like to thank Tanja Lange (Technische Universiteit Eindhoven)
+for her review and comments.
 
 --- back
 
