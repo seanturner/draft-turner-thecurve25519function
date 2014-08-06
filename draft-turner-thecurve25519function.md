@@ -25,7 +25,12 @@ author:
 -
     ins: R. Salz
     name: Rich Salz
-    org: Akamai
+    org: Akamai Technologies
+    street: 8 Cambridge Center
+    city: Cambridge
+    region: MA 02142
+    country: USA
+    phone: +1-617-714-6169
     email: rsalz@akamai.com
 -
     ins: S. Turner
@@ -86,13 +91,16 @@ public domain.
 
 This document provides a stable reference for the Curve25519 function
 {{Curve25519}} to which other specifications may refer when defining
-their use of Curve25519  This document does not specify the use of
-Curve25519 in any other specific protocol, such as TLS (Transport
-Layer Security) or IPsec (Internet Protocol Security).  This document
-specifies how to use Curve25519 for key exchange; it does not specify
-how to use Curve25519 for use with digital signatures. This document
-defines the algorithm, expected "wire format," and provides some
-implementation guidance to avoid known side-channel exposures.
+their use of Curve25519.  It specifies how to use Curve25519 for
+key exchange.  This document defines the algorithm, the "wire format"
+(how to serialize and parse bytes sent over a network, for example),
+and provides some implementation guidance to avoid known side-channel
+timing exposures.
+
+This document does not specify the use of Curve25519 in any other
+specific protocol, such as TLS (Transport Layer Security) or IPsec
+(Internet Protocol Security).  It does not specify how to use
+Curve25519 for digital signatures.
 
 Readers are assumed to be familiar with the concepts of elliptic
 curves, modular arithmetic, group operations, and finite fields
@@ -117,26 +125,28 @@ p: A prime.
 
 GF(p): The field with p elements.
 
-_#: Subscript notation, where # is a number or letter
+s[t]: The t'th bit of the 255-bit number s.
 
-=: Denotes equal to.
+_#: Subscript notation, where # is a number or letter.
 
-^: Denotes exponentiation.
+=: Assignment.
 
-+, -, *, /: Denotes addition, subtraction, multiplication, and division.
+^: Exponentiation.
+
++, -, *, /: Addition, subtraction, multiplication, and division, respectively.
 
 Note that all operations are performed modulo p.
 
 # The Curve25519 Function
 
-Let p = 2^255 - 19. Let E be the elliptic curve with the equation y^2 =
+Let p = 2^255 - 19.  Let E be the elliptic curve with the equation y^2 =
 x^3 + 486662 * x^2 + x over GF(p).
 
 Each element x of GF(p) has a unique little-endian representation
 as 32 bytes s[0] ... s[31], such that s[0] + 256 * s[1] + 256^2 *
 s[2] + ... + 256^31 * s[31] is congruent to x modulo p, and s[31]
 is minimal. Implementations MUST only produce points in this form.
-On receiving a point, implementations MUST mask the high bit of byte
+On receiving a point, implementations MUST mask the leftmost bit of byte
 31 to zero.  This is done to preserve compatibility with point formats
 which reserve the sign bit for use in other protocols and increase
 resistance to implementation fingerprinting.  Implementations MUST
@@ -151,7 +161,7 @@ Then Curve25519(s, X(Q)) = X(sQ) is a function defined for all elements
 of GF(p). The remainder of this document describes how to compute this
 function quickly and securely, and use it in a Diffie-Hellman scheme.
 
-# Implementing Curve25519
+# Implementing the Curve25519 Function
 
 Let s be a 255 bits long integer, where  
 s = sum s_i * 2^i with s_i in {0, 1}. 
@@ -162,101 +172,108 @@ calculations are performed in GF(p), i.e., they are performed modulo
 p. The parameter a24 is a24 = (486662 - 2) / 4 = 121665.
 
 ~~~~~~~~~~
-Let x_1 = x
+    x_1 = x
     x_2 = 1
     z_2 = 0
     x_3 = x
     z_3 = 1
-    For t = 254 to 0:
-            Do constant time conditional swap of:
-              (x_2, z_2) and (x_3, z_3) if s_t is set
-            A = x_2 + z_2
-            AA = A^2
-            B = x_2 - z_2
-            BB = B^2
-            E = AA - BB
-            C = x_3 + z_3
-            D = x_3 - z_3
-            DA = D * A
-            CB = C * B
-            x_3 = (DA + CB)^2
-            z_3 = x_1 * (DA - CB)^2
-            x_2 = AA * BB
-            z_2 = E * (AA + a24 * E)
-            Do constant time conditional swap of:
-              (x_2, z_2) and (x_3, z_3) if s_t is set
+    For t = 254 down to 0:
+        // Conditional swap; see text below.
+        if s[t] is set:
+           swap (x_2, z_2) and (x_3, z_3)
+        A = x_2 + z_2
+        AA = A^2
+        B = x_2 - z_2
+        BB = B^2
+        E = AA - BB
+        C = x_3 + z_3
+        D = x_3 - z_3
+        DA = D * A
+        CB = C * B
+        x_3 = (DA + CB)^2
+        z_3 = x_1 * (DA - CB)^2
+        x_2 = AA * BB
+        z_2 = E * (AA + a24 * E)
+        // Conditional swap; see text below.
+        if s[t] is set:
+            swap (x_2, z_2) and (x_3, z_3)
     Return x_2 * (z_2^(p - 1))
 ~~~~~~~~~~
 
 In implementing this procedure, due to the existence of side-channels
-in commodity hardware, it is vital that the pattern of memory accesses
-and jumps not depend on the bits of s. It is also essential that the
-arithmetic used not leak information about words.
+in commodity hardware, it is important that the pattern of memory accesses
+and jumps not depend on the values of any of the bits of s.
+It is also important that the arithmetic used not leak information about words.
+Implementations that are concerned about this MAY compute the conditional
+swap in constant time (independent of s[t]) like this:
 
-To compute the conditional swap in constant time (independent of s_t) use:
-
-      dummy = s_t * (x_2 - x_3)
+      dummy = s[t] * (x_2 - x_3)
       x_2 = x_2 - dummy
       x_3 = x_3 + dummy
 
-where s_t is 1 or 0. Alternatively use: 
+where s[t] is 1 or 0. Alternatively, an implementation MAY use the following:
 
-      dummy = s_t & (x_2 XOR x_3)
+      dummy = s[t] AND (x_2 XOR x_3)
       x_2 = x_2 XOR x_3
       x_3 = x_3 XOR x_2
 
-where s_t is regarded as the all-1 or all-0 word of 255 bits. The
-latter version is more efficient on most architectures.
+where s[t] is regarded as the all-1 or all-0 word of 255 bits. The
+latter version is often more efficient.
 
 # Use of the Curve25519 function
 
 The Curve25519 function can be used in an ECDH protocol as follows:
 
-Alice takes 32 random bytes in s[0] to s[32]. She masks the lower three
-bits of s[0] and the top bit of s[31] to zero and sets the second top
-most bit of s[31] to 1. This means that s is of the form 2^254 + 8 *
+Alice generates 32 random bytes in f[0] to f[32]. She masks the three rightmost
+bits of f[0] and the leftmost bit of f[31] to zero and sets the second
+leftmost
+most bit of f[31] to 1. This means that f is of the form 2^254 + 8 *
 {0, 1, ..., 2^(251) - 1} as a little-endian integer.
 
-Alice then transmits K_A = Curve25519(s, 9) to Bob, where 9 is the
-number 9. As a sequence of 32 bytes, t, the representation of 9 is t[0]
-= 9, and the remaining bytes are all zero. The natural wire-format
-representation of the value is in little-endian byte order.
+Alice then transmits K_A = Curve25519(f, 9) to Bob, where 9 is the
+number 9.
 
-Bob picks a random g, and computes K_B = Curve25519(g, 9) similarly,
-and transmits it to Alice.
+Bob simialrly generates 32 random bytes in g[0] to f[32],
+computes K_B = Curve25519(g, 9) and transmits it to Alice.
 
-Alice computes Curve25519(s, Curve25519(g, 9)); Bob computes
-Curve25519(g, Curve25519(s, 9)) using their secret values and the
+Alice computes Curve25519(f, Curve25519(g, 9)); Bob computes
+Curve25519(g, Curve25519(f, 9)) using their generated values and the
 received input.
 
-Both of them now share K = Curve25519(s, Curve25519(g, 9)) =
-Curve25519(g, Curve25519(s, 9)) as a shared secret.  Alice and
-Bob use a key-derivation function, such as hashing K, to compute a
-shared secret.
+Both of them now share K = Curve25519(f, Curve25519(g, 9)) =
+Curve25519(g, Curve25519(f, 9)) as a shared secret.  Alice and
+Bob can then use a key-derivation function, such as hashing K, to compute a
+key.
 
 # Test Vectors
 
-The following test vectors are taken from {{NaCl}}:
+The following test vectors are taken from {{NaCl}}. All numbers are
+shown as little-endian hexadecimal byte strings:
 
-Alice's public key:
+Alice's private key, f:
 
-  0x8520f0098930a754748b7ddcb43ef75a0dbf3a0d26381af4eba4a98eaa9b4e6a
+     77 07 6d 0a 73 18 a5 7d 3c 16 c1 72 51 b2 66 45
+     df 4c 2f 87 eb c0 99 2a b1 77 fb a5 1d b9 2c 2a
 
-Alice's secret key
+Alice's public key, Curve25519(f, 9):
 
-  0x77076d0a7318a57d3c16c17251b26645df4c2f87ebc0992ab177fba51db92c2a
+     85 20 f0 09 89 30 a7 54 74 8b 7d dc b4 3e f7 5a
+     0d bf 3a 0d 26 38 1a f4 eb a4 a9 8e aa 9b 4e 6a
 
-Bob's public key:
+Bob's private key, g:
 
-  0xde9edb7d7b7dc1b4d35b61c2ece435373f8343c85b78674dadfc7e146f882b4f
+     5d ab 08 7e 62 4a 8a 4b 79 e1 7f 8b 83 80 0e e6
+     6f 3b b1 29 26 18 b6 fd 1c 2f 8b 27 ff 88 e0 eb
 
-Bob's secret key:
+Bob's public key, Curve25519(g, 9):
 
-  0x5dab087e624a8a4b79e17f8b83800ee66f3bb1292618b6fd1c2f8b27ff88e0eb
+     de 9e db 7d 7b 7d c1 b4 d3 5b 61 c2 ec e4 35 37
+     3f 83 43 c8 5b 78 67 4d ad fc 7e 14 6f 88 2b 4f
 
-Shared secret:
+Their shared secret, K:
 
-  0x4a5d9d5ba4ce2de1728e3bf480350f25e07e21c947d19e3376f09b3c1e161742
+     4a 5d 9d 5b a4 ce 2d e1 72 8e 3b f4 80 35 0f 25
+     e0 7e 21 c9 47 d1 9e 33 76 f0 9b 3c 1e 16 17 42
 
 # Security Considerations
 
