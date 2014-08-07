@@ -125,7 +125,7 @@ p: A prime.
 
 GF(p): The field with p elements.
 
-s[t]: The t'th bit of the 255-bit number s.
+s\[t\]: The t'th bit of the 255-bit number s.
 
 _#: Subscript notation, where # is a number or letter.
 
@@ -143,14 +143,14 @@ Let p = 2^255 - 19.  Let E be the elliptic curve with the equation y^2 =
 x^3 + 486662 * x^2 + x over GF(p).
 
 Each element x of GF(p) has a unique little-endian representation
-as 32 bytes s[0] ... s[31], such that s[0] + 256 * s[1] + 256^2 *
-s[2] + ... + 256^31 * s[31] is congruent to x modulo p, and s[31]
+as 32 bytes s\[0\] ... s\[31\], such that s\[0\] + 256 * s\[1\] + 256^2 *
+s\[2\] + ... + 256^31 * s\[31\] is congruent to x modulo p, and s\[31\]
 is minimal. Implementations MUST only produce points in this form.
 On receiving a point, implementations MUST mask the leftmost bit of byte
 31 to zero.  This is done to preserve compatibility with point formats
 which reserve the sign bit for use in other protocols and increase
 resistance to implementation fingerprinting.  Implementations MUST
-reject numbers in the range [2^255-19, 2^255-1], inclusive.
+reject numbers in the range \[2^255-19, 2^255-1\], inclusive.
 
 Let X denote the projection map from a point (x,y) on E, to x, extended
 so that X of the point at infinity is zero.  X is surjective onto
@@ -179,7 +179,7 @@ p. The parameter a24 is a24 = (486662 - 2) / 4 = 121665.
     z_3 = 1
     For t = 254 down to 0:
         // Conditional swap; see text below.
-        if s[t] is set:
+        if s\[t\] is set:
            swap (x_2, z_2) and (x_3, z_3)
         A = x_2 + z_2
         AA = A^2
@@ -195,7 +195,7 @@ p. The parameter a24 is a24 = (486662 - 2) / 4 = 121665.
         x_2 = AA * BB
         z_2 = E * (AA + a24 * E)
         // Conditional swap; see text below.
-        if s[t] is set:
+        if s\[t\] is set:
             swap (x_2, z_2) and (x_3, z_3)
     Return x_2 * (z_2^(p - 1))
 ~~~~~~~~~~
@@ -205,35 +205,35 @@ in commodity hardware, it is important that the pattern of memory accesses
 and jumps not depend on the values of any of the bits of s.
 It is also important that the arithmetic used not leak information about words.
 Implementations that are concerned about this MAY compute the conditional
-swap in constant time (independent of s[t]) like this:
+swap in constant time (independent of s\[t\]) like this:
 
-      dummy = s[t] * (x_2 - x_3)
+      dummy = s\[t\] * (x_2 - x_3)
       x_2 = x_2 - dummy
       x_3 = x_3 + dummy
 
-where s[t] is 1 or 0. Alternatively, an implementation MAY use the following:
+where s\[t\] is 1 or 0. Alternatively, an implementation MAY use the following:
 
-      dummy = s[t] AND (x_2 XOR x_3)
+      dummy = s\[t\] AND (x_2 XOR x_3)
       x_2 = x_2 XOR x_3
       x_3 = x_3 XOR x_2
 
-where s[t] is regarded as the all-1 or all-0 word of 255 bits. The
+where s\[t\] is regarded as the all-1 or all-0 word of 255 bits. The
 latter version is often more efficient.
 
 # Use of the Curve25519 function
 
 The Curve25519 function can be used in an ECDH protocol as follows:
 
-Alice generates 32 random bytes in f[0] to f[32]. She masks the three rightmost
-bits of f[0] and the leftmost bit of f[31] to zero and sets the second
+Alice generates 32 random bytes in f\[0\] to f\[32\]. She masks the three rightmost
+bits of f\[0\] and the leftmost bit of f\[31\] to zero and sets the second
 leftmost
-most bit of f[31] to 1. This means that f is of the form 2^254 + 8 *
+most bit of f\[31\] to 1. This means that f is of the form 2^254 + 8 *
 {0, 1, ..., 2^(251) - 1} as a little-endian integer.
 
 Alice then transmits K_A = Curve25519(f, 9) to Bob, where 9 is the
 number 9.
 
-Bob simialrly generates 32 random bytes in g[0] to f[32],
+Bob similarly generates 32 random bytes in g\[0\] to g\[32\],
 computes K_B = Curve25519(g, 9) and transmits it to Alice.
 
 Alice computes Curve25519(f, Curve25519(g, 9)); Bob computes
