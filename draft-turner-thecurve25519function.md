@@ -217,8 +217,8 @@ where s\[t\] is 1 or 0. Alternatively, an implementation MAY use the following:
       x_2 = x_2 XOR dummy
       x_3 = x_3 XOR dummy
 
-where s\[t\] is regarded as the all-1 or all-0 word of 255 bits. The
-latter version is often more efficient.
+where s\[t\] is regarded as the all-1 or all-0 word of the same length
+as x_2 and x_3. The latter version is often more efficient.
 
 # Use of the Curve25519 function
 
