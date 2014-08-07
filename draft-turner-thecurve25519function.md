@@ -224,16 +224,17 @@ as x_2 and x_3. The latter version is often more efficient.
 
 The Curve25519 function can be used in an ECDH protocol as follows:
 
-Alice generates 32 random bytes in f\[0\] to f\[32\]. She masks the three rightmost
+Alice generates 32 random bytes in f\[0\] to f\[31\]. She masks the three rightmost
 bits of f\[0\] and the leftmost bit of f\[31\] to zero and sets the second
 leftmost
-most bit of f\[31\] to 1. This means that f is of the form 2^254 + 8 *
+bit of f\[31\] to 1. This means that f is of the form 2^254 + 8 *
 {0, 1, ..., 2^(251) - 1} as a little-endian integer.
 
 Alice then transmits K_A = Curve25519(f, 9) to Bob, where 9 is the
 number 9.
 
-Bob similarly generates 32 random bytes in g\[0\] to g\[32\],
+Bob similarly generates 32 random bytes in g\[0\] to g\[31\],
+applies the same masks,
 computes K_B = Curve25519(g, 9) and transmits it to Alice.
 
 Alice computes Curve25519(f, Curve25519(g, 9)); Bob computes
