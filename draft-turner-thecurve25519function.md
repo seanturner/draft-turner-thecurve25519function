@@ -125,8 +125,6 @@ p: A prime.
 
 GF(p): The field with p elements.
 
-s\[t\]: The t'th bit of the 255-bit number s.
-
 _#: Subscript notation, where # is a number or letter.
 
 =: Assignment.
@@ -173,14 +171,14 @@ p. The parameter a24 is a24 = (486662 - 2) / 4 = 121665.
 
 ~~~~~~~~~~
     x_1 = x
-    x_2 = 1
-    z_2 = 0
+    x_2 = 0
+    z_2 = 1
     x_3 = x
     z_3 = 1
     For t = 254 down to 0:
         // Conditional swap; see text below.
-        if s\[t\] is set:
-           swap (x_2, z_2) and (x_3, z_3)
+	(x_2, x_3) = cswap (s_t, x_2, x_3)
+	(z_2, z_3) = cswap (s_t, z_2, z_3)
         A = x_2 + z_2
         AA = A^2
         B = x_2 - z_2
@@ -195,29 +193,33 @@ p. The parameter a24 is a24 = (486662 - 2) / 4 = 121665.
         x_2 = AA * BB
         z_2 = E * (AA + a24 * E)
         // Conditional swap; see text below.
-        if s\[t\] is set:
-            swap (x_2, z_2) and (x_3, z_3)
+	(x_2, x_3) = cswap (s_t, x_2, x_3)
+	(z_2, z_3) = cswap (s_t, z_2, z_3)
     Return x_2 * (z_2^(p - 1))
 ~~~~~~~~~~
 
 In implementing this procedure, due to the existence of side-channels
 in commodity hardware, it is important that the pattern of memory accesses
 and jumps not depend on the values of any of the bits of s.
-It is also important that the arithmetic used not leak information about words.
-Implementations that are concerned about this MAY compute the conditional
-swap in constant time (independent of s\[t\]) like this:
+It is also important that the arithmetic used not leak information about 
+the integers modulo p (such as having b * c distinguishable from c * c).
 
-      dummy = s\[t\] * (x_2 - x_3)
+The cswap instruction SHOULD be implemented in constant time (independent 
+of s_t) as follows:
+
+cswap(s_t, x_2, x_3)
+      dummy = s_t * (x_2 - x_3)
       x_2 = x_2 - dummy
       x_3 = x_3 + dummy
+Return (x_2, x_3)
 
-where s\[t\] is 1 or 0. Alternatively, an implementation MAY use the following:
+where s_t is 1 or 0. Alternatively, an implementation MAY use the following:
 
-      dummy = s\[t\] AND (x_2 XOR x_3)
+      dummy = s_t AND (x_2 XOR x_3)
       x_2 = x_2 XOR dummy
       x_3 = x_3 XOR dummy
 
-where s\[t\] is regarded as the all-1 or all-0 word of the same length
+where s_t is regarded as the all-1 or all-0 word of the same length
 as x_2 and x_3. The latter version is often more efficient.
 
 # Use of the Curve25519 function
