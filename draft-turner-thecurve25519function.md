@@ -141,8 +141,8 @@ Let p = 2^255 - 19.  Let E be the elliptic curve with the equation y^2 =
 x^3 + 486662 * x^2 + x over GF(p).
 
 Each element x of GF(p) has a unique little-endian representation
-as 32 bytes s\[0\] ... s\[31\], such that s\[0\] + 256 * s\[1\] + 256^2 *
-s\[2\] + ... + 256^31 * s\[31\] is congruent to x modulo p, and s\[31\]
+as 32 bytes x\[0\] ... x\[31\], such that x\[0\] + 256 * x\[1\] + 256^2 *
+x\[2\] + ... + 256^31 * x\[31\] is congruent to x modulo p, and x\[31\]
 is minimal. Implementations MUST only produce points in this form.
 On receiving a point, implementations MUST mask the leftmost bit of byte
 31 to zero.  This is done to preserve compatibility with point formats
@@ -155,8 +155,10 @@ so that X of the point at infinity is zero.  X is surjective onto
 GF(p) if the y coordinate takes on values in GF(p) and in a quadratic
 extension of GF(p).
 
-Then Curve25519(s, X(Q)) = X(sQ) is a function defined for all elements
-of GF(p). The remainder of this document describes how to compute this
+Then Curve25519(s, X(Q)) = X(sQ) is a function defined for all integers
+s and elements X(Q) of GF(p). Proper implementations use a restricted
+set of integers for s and only x-coordinates of points Q defined over
+GF(p). The remainder of this document describes how to compute this
 function quickly and securely, and use it in a Diffie-Hellman scheme.
 
 # Implementing the Curve25519 Function
