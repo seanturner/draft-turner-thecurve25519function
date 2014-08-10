@@ -215,24 +215,27 @@ cswap(s_t, x_2, x_3)
       x_3 = x_3 + dummy
 Return (x_2, x_3)
 
-where s_t is 1 or 0. Alternatively, an implementation MAY use the following:
+where s_t is 1 or 0. Alternatively, an implementation MAY use the
+following:
 
-      dummy = s_t AND (x_2 XOR x_3)
+      dummy = mask(s_t) AND (x_2 XOR x_3)
       x_2 = x_2 XOR dummy
       x_3 = x_3 XOR dummy
 
-where s_t is regarded as the all-1 or all-0 word of the same length
-as x_2 and x_3. The latter version is often more efficient.
+where mask(s_t) is the all-1 or all-0 word of the same length as x_2
+and x_3, computed, e.g., as 
+      mask(s_t) = 1 - s_t.
+The latter version is often more efficient.
 
 # Use of the Curve25519 function
 
 The Curve25519 function can be used in an ECDH protocol as follows:
 
-Alice generates 32 random bytes in f\[0\] to f\[31\]. She masks the three rightmost
-bits of f\[0\] and the leftmost bit of f\[31\] to zero and sets the second
-leftmost
-bit of f\[31\] to 1. This means that f is of the form 2^254 + 8 *
-{0, 1, ..., 2^(251) - 1} as a little-endian integer.
+Alice generates 32 random bytes in f\[0\] to f\[31\]. She masks the
+three rightmost bits of f\[0\] and the leftmost bit of f\[31\] to zero
+and sets the second leftmost bit of f\[31\] to 1. This means that f is
+of the form 2^254 + 8 * {0, 1, ..., 2^(251) - 1} as a little-endian
+integer.
 
 Alice then transmits K_A = Curve25519(f, 9) to Bob, where 9 is the
 number 9.
@@ -246,8 +249,8 @@ Curve25519(g, Curve25519(f, 9)) using their generated values and the
 received input.
 
 Both of them now share K = Curve25519(f, Curve25519(g, 9)) =
-Curve25519(g, Curve25519(f, 9)) as a shared secret.  Alice and
-Bob can then use a key-derivation function, such as hashing K, to compute a
+Curve25519(g, Curve25519(f, 9)) as a shared secret.  Alice and Bob can
+then use a key-derivation function, such as hashing K, to compute a
 key.
 
 # Test Vectors
