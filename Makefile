@@ -11,7 +11,7 @@ endif
 
 draft_type := $(suffix $(firstword $(wildcard $(draft).md $(draft).xml)))
 
-current_ver := $(shell git tag | grep '$(draft)-[0-9][0-9]' | tail -1 | sed -e"s/.*-//")
+current_ver := $(shell git tag | grep '$(draft)-[0-9][0-9]' | tail -1 | sed -e 's/.*-//' -e 's/.txt//' )
 ifeq "${current_ver}" ""
 next_ver ?= 00
 else
@@ -24,12 +24,13 @@ next := $(draft)-$(next_ver)
 latest: $(draft).txt $(draft).html
 
 submit: $(next).txt
+	@echo Dont forget to tag after submit.
 
 idnits: $(next).txt
 	$(idnits) $<
 
 clean:
-	-rm -f $(draft).txt $(draft).html index.html
+	-rm -f $(draft).txt $(draft).html $(draft).xml index.html
 	-rm -f $(next).txt $(next).html
 	-rm -f $(draft)-[0-9][0-9].xml
 ifeq (md,$(draft_type))
