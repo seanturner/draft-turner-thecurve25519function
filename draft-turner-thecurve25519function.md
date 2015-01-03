@@ -224,7 +224,7 @@ following:
 
 where mask(s_t) is the all-1 or all-0 word of the same length as x_2
 and x_3, computed, e.g., as 
-      mask(s_t) = 1 - s_t.
+      mask(s_t) = 0 - s_t.
 The latter version is often more efficient.
 
 # Use of the Curve25519 function
