@@ -295,6 +295,15 @@ Curve25519 is designed to enable very high performance software
 implementations, thus reducing the cost of highly secure cryptography
 to a point where it can be used more widely.
 
+Curve25519 can be generated in the following manner: Let p=2^255-19, and
+consider the elliptic curve y^2=x^3+ux^2+x for various choices of u. Then 486662
+is the minimum u congruent to 2 (mod 4) such that the order of the curve is 8 times a prime
+and the order of the twist is 4 times a prime.
+
+The prime 2^255-19 was selected to enable highly efficent arithmetic across a wide range of platforms.
+Few primes of the form 2^c-s with s small exist between 2^250 and 2^521, and other choices of coefficient are not
+as competitive in performance. 
+
 # IANA Considerations
 
 None.
