@@ -2,8 +2,8 @@
 
 This is the working area for the authors draft of draft-turner-thecurve25519function.
 
-* [Editor's copy](https://github.com/seanturner/draft-ietf-turner-thecurve25519function/blob/master/draft-ietf-turner-thecurve25519function.txt)
-* [Official Draft] (https://datatracker.ietf.org/doc/draft-ietf-turner-thecurve25519function)
+* [Editor's copy](https://github.com/seanturner/draft-turner-thecurve25519function/blob/master/draft-turner-thecurve25519function.md)
+* [Official Draft] (https://datatracker.ietf.org/doc/draft-turner-thecurve25519function)
 
 
 ## Contributing
@@ -12,7 +12,7 @@ Before submitting feedback, please familiarize yourself with our current issues 
 
 Be aware that all contributions to the specification fall under the "NOTE WELL" terms outlined below.
 
-1. The best way to provide feedback (editorial or design) and ask questions is sending an e-mail to the authors @ draft-ietf-turner-thecurve25519function@tools.ietf.org.
+1. The best way to provide feedback (editorial or design) and ask questions is sending an e-mail to the authors @ draft-turner-thecurve25519function@tools.ietf.org.
 
 2. If you have **editorial** suggestions (i.e., those that do not change the
 meaning of the specification), you can either:
