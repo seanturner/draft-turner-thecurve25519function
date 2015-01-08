@@ -197,7 +197,7 @@ p. The parameter a24 is a24 = (486662 - 2) / 4 = 121665.
         // Conditional swap; see text below.
 	(x_2, x_3) = cswap (s_t, x_2, x_3)
 	(z_2, z_3) = cswap (s_t, z_2, z_3)
-    Return x_2 * (z_2^(p - 1))
+    Return x_2 * (z_2^(p - 2))
 ~~~~~~~~~~
 
 In implementing this procedure, due to the existence of side-channels
