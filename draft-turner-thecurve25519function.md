@@ -173,11 +173,11 @@ p. The parameter a24 is a24 = (486662 - 2) / 4 = 121665.
 
 ~~~~~~~~~~
     x_1 = x
-    x_2 = 0
-    z_2 = 1
+    x_2 = 1
+    z_2 = 0
     x_3 = x
     z_3 = 1
-    For t = 254 down to 0:
+    For t = 255 down to 0:
         // Conditional swap; see text below.
 	(x_2, x_3) = cswap (s_t, x_2, x_3)
 	(z_2, z_3) = cswap (s_t, z_2, z_3)
@@ -191,7 +191,7 @@ p. The parameter a24 is a24 = (486662 - 2) / 4 = 121665.
         DA = D * A
         CB = C * B
         x_3 = (DA + CB)^2
-        z_3 = x_1 * (DA - CB)^2
+        z_3 = x_1 * (CB - DA)^2
         x_2 = AA * BB
         z_2 = E * (AA + a24 * E)
         // Conditional swap; see text below.
