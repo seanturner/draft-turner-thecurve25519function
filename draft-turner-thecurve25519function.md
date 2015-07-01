@@ -209,11 +209,11 @@ the integers modulo p (such as having b * c distinguishable from c * c).
 The cswap instruction SHOULD be implemented in constant time (independent 
 of s_t) as follows:
 
-cswap(s_t, x_2, x_3)
-      dummy = s_t * (x_2 - x_3)
-      x_2 = x_2 - dummy
-      x_3 = x_3 + dummy
-Return (x_2, x_3)
+	cswap(s_t, x_2, x_3)
+	      dummy = s_t * (x_2 - x_3)
+	      x_2 = x_2 - dummy
+	      x_3 = x_3 + dummy
+	Return (x_2, x_3)
 
 where s_t is 1 or 0. Alternatively, an implementation MAY use the
 following:
